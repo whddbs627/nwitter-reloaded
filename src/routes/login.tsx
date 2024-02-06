@@ -36,6 +36,8 @@ export default function CreateAccount() {
         try {
             setLoading(true);
             await signInWithEmailAndPassword(auth, email, password);
+            if (!auth.currentUser?.emailVerified)
+                throw setError("Not Verified Email");
             navigate("/");
         } catch (e) {
             if (e instanceof FirebaseError) {
