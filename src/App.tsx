@@ -13,36 +13,36 @@ import ProtectedRoute from "./components/protected-route";
 import ForgetPassword from "./routes/forget-password";
 
 const router = createBrowserRouter([
-    {
-        path: "/",
-        element: (
-            <ProtectedRoute>
-                <Layout />
-            </ProtectedRoute>
-        ),
-        children: [
-            {
-                path: "",
-                element: <Home />,
-            },
-            {
-                path: "profile",
-                element: <Profile />,
-            },
-        ],
-    },
-    {
-        path: "/login",
-        element: <Login />,
-    },
-    {
-        path: "/create-account",
-        element: <CreateAccount />,
-    },
-    {
-        path: "/forget-password",
-        element: <ForgetPassword />,
-    },
+  {
+    path: "/",
+    element: (
+      <ProtectedRoute>
+        <Layout />
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        path: "",
+        element: <Home />,
+      },
+      {
+        path: "profile",
+        element: <Profile />,
+      },
+    ],
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/create-account",
+    element: <CreateAccount />,
+  },
+  {
+    path: "/forget-password",
+    element: <ForgetPassword />,
+  },
 ]);
 
 const GlobalStyles = createGlobalStyle`  
@@ -55,30 +55,33 @@ const GlobalStyles = createGlobalStyle`
     color:white;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   }
+  ::-webkit-scrollbar {
+display:none;
+}
 `;
 
 const Wrapper = styled.div`
-    height: 100vh;
-    display: flex;
-    justify-content: center;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
 `;
 
 function App() {
-    const [isLoading, setLoading] = useState(true);
-    const init = async () => {
-        // wait for firebase
-        await auth.authStateReady();
-        setLoading(false);
-    };
-    useEffect(() => {
-        init();
-    }, []);
-    return (
-        <Wrapper>
-            <GlobalStyles />
-            {isLoading ? <LoadingScreen /> : <RouterProvider router={router} />}
-        </Wrapper>
-    );
+  const [isLoading, setLoading] = useState(true);
+  const init = async () => {
+    // wait for firebase
+    await auth.authStateReady();
+    setLoading(false);
+  };
+  useEffect(() => {
+    init();
+  }, []);
+  return (
+    <Wrapper>
+      <GlobalStyles />
+      {isLoading ? <LoadingScreen /> : <RouterProvider router={router} />}
+    </Wrapper>
+  );
 }
 
 export default App;
