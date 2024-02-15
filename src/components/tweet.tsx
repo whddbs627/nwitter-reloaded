@@ -3,6 +3,8 @@ import { ITweet } from "./timeline";
 import { auth, db, storage } from "../firebase";
 import { deleteDoc, doc } from "firebase/firestore";
 import { deleteObject, ref } from "firebase/storage";
+import { useState } from "react";
+import EditTweetForm from "./edit-tweet-form";
 
 const Wrapper = styled.div`
   display: grid;
@@ -12,7 +14,14 @@ const Wrapper = styled.div`
   border-radius: 15px;
 `;
 
-const Column = styled.div``;
+const Column = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  &:last-child:not(:first-child) {
+    align-items: center;
+  }
+`;
 
 const Photo = styled.img`
   width: 100px;
@@ -28,6 +37,13 @@ const Username = styled.span`
 const Payload = styled.p`
   margin: 10px 0px;
   font-size: 18px;
+  line-height: 1.4;
+`;
+
+const BtnWrap = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
 `;
 
 const DeleteButton = styled.button`
@@ -42,7 +58,20 @@ const DeleteButton = styled.button`
   cursor: pointer;
 `;
 
+const EditButton = styled.button`
+  background-color: green;
+  color: white;
+  font-weight: 600;
+  border: 0;
+  font-size: 12px;
+  padding: 5px;
+  text-transform: uppercase;
+  border-radius: 5px;
+  cursor: pointer;
+`;
+
 export default function Tweet({ username, photo, tweet, userId, id }: ITweet) {
+  const [isEditing, setIsEditing] = useState(false);
   const user = auth.currentUser;
   const onDelete = async () => {
     const ok = confirm("Are you sure you want to delete this tweet?");
@@ -59,13 +88,28 @@ export default function Tweet({ username, photo, tweet, userId, id }: ITweet) {
       //
     }
   };
+  const onEdit = () => setIsEditing((prev) => !prev);
   return (
     <Wrapper>
       <Column>
         <Username>{username}</Username>
-        <Payload>{tweet}</Payload>
+        {isEditing ? (
+          <EditTweetForm
+            tweet={tweet}
+            photo={photo}
+            id={id}
+            setIsEditing={setIsEditing}
+          />
+        ) : (
+          <Payload>{tweet}</Payload>
+        )}
         {user?.uid === userId ? (
-          <DeleteButton onClick={onDelete}>Delete</DeleteButton>
+          <BtnWrap>
+            <EditButton onClick={onEdit}>
+              {isEditing ? "Cancel" : "Edit"}
+            </EditButton>
+            <DeleteButton onClick={onDelete}>Delete</DeleteButton>
+          </BtnWrap>
         ) : null}
       </Column>
       <Column>{photo ? <Photo src={photo} /> : null}</Column>
