@@ -105,10 +105,10 @@ export default function Tweet({ username, photo, tweet, userId, id }: ITweet) {
         )}
         {user?.uid === userId ? (
           <BtnWrap>
-            <DeleteButton onClick={onDelete}>Delete</DeleteButton>
             <EditButton onClick={onEdit}>
               {isEditing ? "Cancel" : "Edit"}
             </EditButton>
+            <DeleteButton onClick={onDelete}>Delete</DeleteButton>
           </BtnWrap>
         ) : null}
       </Column>

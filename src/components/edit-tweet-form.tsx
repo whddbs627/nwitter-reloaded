@@ -1,12 +1,7 @@
 import { useState } from "react";
 import { auth, db, storage } from "../firebase";
 import { doc, updateDoc } from "firebase/firestore";
-import {
-  deleteObject,
-  getDownloadURL,
-  ref,
-  uploadBytes,
-} from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import styled from "styled-components";
 
 const Form = styled.form`
@@ -107,10 +102,10 @@ export default function EditTweetForm({
       });
 
       if (editFile) {
-        if (photo) {
-          const originRef = ref(storage, `tweets/${user.uid}/${id}`);
-          await deleteObject(originRef);
-        }
+        // if (photo) {
+        //   const originRef = ref(storage, `tweets/${user.uid}/${id}`);
+        //   await deleteObject(originRef);
+        // }
         const locationRef = ref(storage, `tweets/${user.uid}/${id}`);
         const result = await uploadBytes(locationRef, editFile);
         const url = await getDownloadURL(result.ref);
