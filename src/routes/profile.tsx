@@ -54,13 +54,35 @@ const Tweets = styled.div`
   width: 100%;
 `;
 
+const NameInput = styled.input`
+  background-color: black;
+  font-size: 22px;
+  text-align: center;
+  color: white;
+  border: 1px solid white;
+  border-radius: 15px;
+`;
+
+const ChangeNameBtn = styled.button`
+  background-color: #3b3a3a;
+  color: white;
+  padding: 10px 5px;
+  font-size: 15px;
+  border-radius: 10px;
+  border: 0.1px solid white;
+  min-width: 110px;
+`;
+
 export default function Profile() {
   const user = auth.currentUser;
   const [avatar, setAvatar] = useState(user?.photoURL);
   const [tweets, setTweets] = useState<ITweet[]>([]);
+  const [name, setName] = useState(user?.displayName ?? "Anonymous");
+  const [editMode, setEditMode] = useState(false);
+
   const onAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { files } = e.target;
     if (!user) return;
+    const { files } = e.target;
     if (files && files.length === 1) {
       const file = files[0];
       const locationRef = ref(storage, `avatars/${user?.uid}`);
@@ -96,6 +118,25 @@ export default function Profile() {
   useEffect(() => {
     fetchTweets();
   }, []);
+
+  const onNameChangeClick = async () => {
+    if (!user) return;
+    setEditMode((prev) => !prev);
+    if (!editMode) return;
+    try {
+      await updateProfile(user, {
+        displayName: name,
+      });
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setEditMode(false);
+    }
+  };
+
+  const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    setName(event.target.value);
+
   return (
     <Wrapper>
       <AvatarUpload htmlFor="avatar">
@@ -123,7 +164,14 @@ export default function Profile() {
         type="file"
         accept="image/*"
       />
-      <Name>{user?.displayName ?? "Anonymous"}</Name>
+      {editMode ? (
+        <NameInput onChange={onNameChange} type="text" value={name} />
+      ) : (
+        <Name>{name ?? "Anonymous"}</Name>
+      )}
+      <ChangeNameBtn onClick={onNameChangeClick}>
+        {editMode ? "save" : "Change Name"}
+      </ChangeNameBtn>
       <Tweets>
         {tweets.map((tweet) => (
           <Tweet key={tweet.id} {...tweet} />
