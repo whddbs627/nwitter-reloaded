@@ -78,7 +78,7 @@ export default function Profile() {
       limit(25)
     );
     const snapshot = await getDocs(tweetQuery);
-    const tweets = snapshot.docs.map((doc) => {
+    const newTweets = snapshot.docs.map((doc) => {
       const { tweet, createdAt, userId, username, photo } = doc.data();
       return {
         tweet,
@@ -89,11 +89,13 @@ export default function Profile() {
         id: doc.id,
       };
     });
-    setTweets(tweets);
+    if (tweets !== newTweets) {
+      setTweets(newTweets);
+    }
   };
   useEffect(() => {
     fetchTweets();
-  }, [tweets]);
+  });
   return (
     <Wrapper>
       <AvatarUpload htmlFor="avatar">
